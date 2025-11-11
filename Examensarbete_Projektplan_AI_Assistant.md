@@ -60,10 +60,11 @@
 
 ```mermaid
 flowchart TD
-    FE[React Frontend] -- WebSocket / HTTP --> BE[.NET 8 WebAPI + SignalR]
-    BE --> AI[(OpenAI/Groq API)]
+    FE[React UI] --> BE[.NET 8 WebAPI + SignalR]
+    BE --> AI[(OpenAI API)]
+    BE --> DB[(SQLite)]
     BE --> Export[MD/TXT Export]
-    FE --> UI[(Resultat: Summary + Actions)]
+    UI[(Summary + Action list)] --> FE
 ```
 
 ---
