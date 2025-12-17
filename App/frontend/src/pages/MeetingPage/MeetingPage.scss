@@ -1,0 +1,34 @@
+.meeting-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: var(--text);
+
+  &__layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 1.5rem;
+  }
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    &--left,
+    &--right {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(12px);
+    }
+  }
+
+  @media (max-width: 900px) {
+    &__layout {
+      grid-template-columns: 1fr;
+    }
+  }
+}

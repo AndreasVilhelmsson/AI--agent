@@ -1,0 +1,27 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+
+  &__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  &__cta {
+    padding: 0.6rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(85, 97, 255, 0.25);
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--primary-hover);
+    }
+  }
+}

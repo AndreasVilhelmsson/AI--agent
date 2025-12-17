@@ -1,0 +1,36 @@
+/* src/styles/global.css */
+:root {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+}
+
+#root {
+  min-height: 100%;
+}
+
+/* Page background gradient */
+.app-bg {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+}

@@ -1,0 +1,75 @@
+/* src/styles/variables.css */
+:root {
+  /* Typography */
+  --font-sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    sans-serif;
+
+  /* Radii */
+  --radius-lg: 18px;
+  --radius-md: 14px;
+
+  /* Shadows */
+  --shadow-lg: 0 18px 45px rgba(0, 0, 0, 0.18);
+  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.12);
+
+  /* Light theme (default) */
+  --bg: #eef1ff;
+  --bg-gradient: radial-gradient(
+      1200px 800px at 20% 10%,
+      #cfd6ff 0%,
+      rgba(207, 214, 255, 0) 60%
+    ),
+    radial-gradient(
+      900px 700px at 80% 25%,
+      #d9ccff 0%,
+      rgba(217, 204, 255, 0) 55%
+    ),
+    linear-gradient(180deg, #eef1ff 0%, #eef1ff 100%);
+
+  --panel: rgba(255, 255, 255, 0.62);
+  --panel-solid: #ffffff;
+  --panel-border: rgba(17, 24, 39, 0.08);
+
+  --card: rgba(255, 255, 255, 0.75);
+  --card-border: rgba(17, 24, 39, 0.1);
+
+  --text: #0f172a;
+  --text-muted: rgba(15, 23, 42, 0.72);
+
+  --primary: #5561ff;
+  --primary-hover: #4954ff;
+
+  --btn-bg: rgba(15, 23, 42, 0.06);
+  --btn-border: rgba(15, 23, 42, 0.1);
+
+  --focus: rgba(85, 97, 255, 0.35);
+}
+
+/* Dark mode via attribute (vi togglar senare) */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-gradient: radial-gradient(
+      1200px 800px at 20% 10%,
+      rgba(85, 97, 255, 0.2) 0%,
+      rgba(85, 97, 255, 0) 60%
+    ),
+    radial-gradient(
+      900px 700px at 80% 25%,
+      rgba(217, 204, 255, 0.16) 0%,
+      rgba(217, 204, 255, 0) 55%
+    ),
+    linear-gradient(180deg, #0f172a 0%, #0b1222 100%);
+
+  --panel: rgba(31, 41, 55, 0.62);
+  --panel-solid: #111827;
+  --panel-border: rgba(255, 255, 255, 0.08);
+
+  --card: rgba(17, 24, 39, 0.72);
+  --card-border: rgba(255, 255, 255, 0.1);
+
+  --text: #e5e7eb;
+  --text-muted: rgba(229, 231, 235, 0.72);
+
+  --btn-bg: rgba(255, 255, 255, 0.06);
+  --btn-border: rgba(255, 255, 255, 0.1);
+}

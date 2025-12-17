@@ -1,19 +1,44 @@
-using Microsoft.EntityFrameworkCore; // om du lägger till EF senare
+using backend.Api.Hubs;
+using backend.Application.Services;
+using backend.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// MVC / Controllers
 builder.Services.AddControllers();
+
+// Realtime
 builder.Services.AddSignalR();
+
+// Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<backend.Application.Services.AnalysisService>();
-// Add services to the 
-// container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+
+// OpenAI / HttpClient
+builder.Services.AddHttpClient<AnalysisService>();
+
+// EF Core + SQLite
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                       ?? "Data Source=ai_meetings.db";
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlite(connectionString);
+});
+
+// CORS: frontend kör på http://localhost:5173
+builder.Services.AddCors(o =>
+    o.AddDefaultPolicy(p =>
+        p.WithOrigins("http://localhost:5173")
+         .AllowAnyHeader()
+         .AllowAnyMethod()
+         .AllowCredentials()
+    ));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -21,14 +46,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseCors();
-app.MapControllers();
-app.MapHub<backend.Api.Hubs.MeetingHub>("/hubs/meeting");
+// I dev: hoppa över HTTPS-redirect för att slippa strul med ws/http
+// app.UseHttpsRedirection();
 
+app.UseCors();
+
+app.MapControllers();
+app.MapHub<MeetingHub>("/hubs/meeting");
+
+// Demo-weather (kan vara kvar eller tas bort)
 var summaries = new[]
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy",
+    "Hot", "Sweltering", "Scorching"
 };
 
 app.MapGet("/weatherforecast", () =>

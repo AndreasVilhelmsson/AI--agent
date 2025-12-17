@@ -1,0 +1,126 @@
+.text-input-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  height: 100%;
+
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(14px);
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.55rem;
+    font-weight: 750;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  &__description {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  &__body {
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__textarea {
+    width: 100%;
+    height: 100%;
+    min-height: 340px;
+
+    resize: none;
+    padding: 1rem 1.1rem;
+
+    border-radius: var(--radius-md);
+    border: 2px solid rgba(85, 97, 255, 0.18);
+
+    background: var(--panel-solid);
+    color: var(--text);
+
+    font-size: 0.98rem;
+    line-height: 1.55;
+
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease,
+      background 0.15s ease;
+
+    &::placeholder {
+      color: rgba(15, 23, 42, 0.45);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: rgba(85, 97, 255, 0.55);
+      box-shadow: 0 0 0 4px var(--focus), inset 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  &__button {
+    appearance: none;
+    border: 1px solid transparent;
+
+    padding: 0.65rem 1.1rem;
+    border-radius: 999px;
+
+    font-size: 0.95rem;
+    font-weight: 650;
+
+    cursor: pointer;
+    transition: transform 0.12s ease, background 0.15s ease,
+      border-color 0.15s ease, opacity 0.15s ease;
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    &--primary {
+      background: var(--primary);
+      color: #fff;
+
+      &:hover:not(:disabled) {
+        background: var(--primary-hover);
+      }
+    }
+
+    &--secondary {
+      background: var(--btn-bg);
+      color: var(--text);
+      border-color: var(--btn-border);
+
+      &:hover:not(:disabled) {
+        background: rgba(15, 23, 42, 0.08);
+      }
+    }
+  }
+}

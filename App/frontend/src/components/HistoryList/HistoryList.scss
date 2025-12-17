@@ -1,0 +1,143 @@
+.history {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0; // gör att children med overflow kan scrolla i flex/grid
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  &__refresh {
+    appearance: none;
+    border: 1px solid var(--btn-border);
+    background: var(--btn-bg);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 0.45rem 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease,
+      background 120ms ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 4px var(--focus);
+    }
+  }
+
+  &__error {
+    margin: 0;
+    color: #ef4444;
+    font-size: 0.95rem;
+  }
+
+  &__empty {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  /* Scroll-container */
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    /* 👇 detta är nyckeln för “scroll i history-card” */
+    max-height: 360px; // justera vid behov (t.ex. 320–420)
+    overflow: auto;
+    padding-right: 6px; // så scrollbar inte ligger på korten
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    /* mild scrollbar (chromium + firefox) */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.18);
+      border-radius: 999px;
+      border: 3px solid transparent;
+      background-clip: padding-box;
+    }
+  }
+
+  /* Clickable card */
+  &__item {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 0.95rem 1rem;
+    box-shadow: none;
+    transition: transform 140ms ease, box-shadow 140ms ease,
+      border-color 140ms ease;
+
+    cursor: pointer; // 👈 tydligt att det går att klicka
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(85, 97, 255, 0.35);
+    }
+
+    &:active {
+      transform: translateY(-1px);
+    }
+
+    /* Om du gör <li> klickbar med onClick, lägg gärna tabIndex=0 i React senare */
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 4px var(--focus), var(--shadow-md);
+      border-color: rgba(85, 97, 255, 0.45);
+    }
+  }
+
+  &__date {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+
+  &__summary {
+    margin: 0;
+    color: var(--text);
+    line-height: 1.35;
+
+    /* snygg truncation */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
