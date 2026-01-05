@@ -14,4 +14,6 @@ public class MeetingAnalysis
 	public string ActionsJson { get; set; } = string.Empty;
 
 	public DateTime CreatedAtUtc { get; set; }
+	public int? MeetingId { get; set; }
+	public Meeting? Meeting { get; set; }
 }

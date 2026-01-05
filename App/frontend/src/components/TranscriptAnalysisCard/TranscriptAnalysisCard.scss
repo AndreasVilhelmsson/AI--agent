@@ -1,0 +1,82 @@
+.ta-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ta-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ta-card__title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.ta-card__sub {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.ta-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.ta-card__btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #f7f7f7;
+  cursor: pointer;
+}
+
+.ta-card__btn.primary {
+  background: #5b6cff;
+  color: #fff;
+  border-color: transparent;
+}
+
+.ta-card__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ta-card__error {
+  color: #c0392b;
+  font-size: 0.9rem;
+}
+
+.ta-card__muted {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.ta-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ta-card__h {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.ta-card__p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ta-card__list {
+  margin: 0;
+  padding-left: 18px;
+}

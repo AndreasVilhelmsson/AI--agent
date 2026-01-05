@@ -17,6 +17,28 @@ namespace backend.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.10");
 
+            modelBuilder.Entity("backend.Domain.Meetings.Meeting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Meetings");
+                });
+
             modelBuilder.Entity("backend.Domain.Meetings.MeetingAnalysis", b =>
                 {
                     b.Property<int>("Id")
@@ -29,6 +51,9 @@ namespace backend.Migrations
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("MeetingId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("RawNotes")
                         .IsRequired()
@@ -43,7 +68,112 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MeetingId");
+
                     b.ToTable("MeetingAnalyses");
+                });
+
+            modelBuilder.Entity("backend.Domain.Meetings.Transcript", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("DurationSeconds")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("MeetingId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MeetingId")
+                        .IsUnique();
+
+                    b.ToTable("Transcripts");
+                });
+
+            modelBuilder.Entity("backend.Domain.Meetings.TranscriptSegment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("EndSeconds")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("SegmentIndex")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("StartSeconds")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TranscriptId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TranscriptId", "SegmentIndex")
+                        .IsUnique();
+
+                    b.ToTable("TranscriptSegments");
+                });
+
+            modelBuilder.Entity("backend.Domain.Meetings.MeetingAnalysis", b =>
+                {
+                    b.HasOne("backend.Domain.Meetings.Meeting", "Meeting")
+                        .WithMany()
+                        .HasForeignKey("MeetingId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Meeting");
+                });
+
+            modelBuilder.Entity("backend.Domain.Meetings.Transcript", b =>
+                {
+                    b.HasOne("backend.Domain.Meetings.Meeting", "Meeting")
+                        .WithOne("Transcript")
+                        .HasForeignKey("backend.Domain.Meetings.Transcript", "MeetingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Meeting");
+                });
+
+            modelBuilder.Entity("backend.Domain.Meetings.TranscriptSegment", b =>
+                {
+                    b.HasOne("backend.Domain.Meetings.Transcript", "Transcript")
+                        .WithMany("Segments")
+                        .HasForeignKey("TranscriptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transcript");
+                });
+
+            modelBuilder.Entity("backend.Domain.Meetings.Meeting", b =>
+                {
+                    b.Navigation("Transcript");
+                });
+
+            modelBuilder.Entity("backend.Domain.Meetings.Transcript", b =>
+                {
+                    b.Navigation("Segments");
                 });
 #pragma warning restore 612, 618
         }

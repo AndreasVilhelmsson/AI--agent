@@ -18,6 +18,7 @@ builder.Services.AddOpenApi();
 
 // OpenAI / HttpClient
 builder.Services.AddHttpClient<AnalysisService>();
+builder.Services.AddHttpClient<TranscriptionService>();
 
 // EF Core + SQLite
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")

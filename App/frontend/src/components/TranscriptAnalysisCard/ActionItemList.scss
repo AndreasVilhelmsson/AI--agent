@@ -1,0 +1,23 @@
+.action-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.action-item {
+  background: #1f1f1f;
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+}
+
+.action-item__task {
+  font-weight: 500;
+}
+
+.action-item__meta {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #9aa0a6;
+}
