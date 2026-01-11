@@ -10,4 +10,5 @@ public class Meeting
 	public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
 	public Transcript? Transcript { get; set; }
+
 }

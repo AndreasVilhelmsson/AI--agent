@@ -1,8 +1,6 @@
+// features/meeting/meetingsApi.ts
 import axios from "axios";
-
-const api = axios.create({
-  baseURL: "http://localhost:5168/api",
-});
+import { api } from "./api";
 
 export type CreateMeetingResponse = {
   id: number;
@@ -59,6 +57,28 @@ export type AnalyzeTranscriptResponse = {
   detailed: TranscriptAnalysisDto;
 };
 
+export type MeetingListItemDto = {
+  id: number;
+  title: string;
+  createdAtUtc: string;
+  hasTranscript: boolean;
+  lastAnalysisAtUtc: string | null;
+};
+
+export type MeetingAnalysisSummaryDto = {
+  id: number;
+  summary: string;
+  createdAtUtc: string;
+};
+
+export type MeetingDetailsDto = {
+  id: number;
+  title: string;
+  createdAtUtc: string;
+  transcript: MeetingTranscriptDto | null;
+  analyses: MeetingAnalysisSummaryDto[];
+};
+
 export async function createMeeting(title: string) {
   const res = await api.post<CreateMeetingResponse>("/meetings", { title });
   return res.data;
@@ -71,7 +91,9 @@ export async function uploadMeetingAudio(meetingId: number, file: File) {
   const res = await api.post<UploadAudioResponse>(
     `/meetings/${meetingId}/audio`,
     form,
-    { headers: { "Content-Type": "multipart/form-data" } }
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
   );
 
   return res.data;
@@ -85,20 +107,28 @@ export async function fetchMeetingTranscript(meetingId: number) {
     return res.data;
   } catch (err: unknown) {
     if (axios.isAxiosError(err) && err.response?.status === 404) {
-      return null; // <-- ingen transcript ännu
+      return null;
     }
     throw err;
   }
 }
 
-export async function analyzeTranscript(meetingId: number) {
-  const res = await api.post(`/meetings/${meetingId}/analyze-transcript`);
-  return res.data;
-}
-
+// ✅ En funktion: Generate detailed analysis
 export async function analyzeMeetingTranscript(meetingId: number) {
   const res = await api.post<AnalyzeTranscriptResponse>(
     `/meetings/${meetingId}/analyze-transcript`
   );
+  return res.data;
+}
+
+export async function fetchMeetings(take = 25) {
+  const res = await api.get<MeetingListItemDto[]>(`/meetings`, {
+    params: { take },
+  });
+  return res.data;
+}
+
+export async function fetchMeetingDetails(meetingId: number) {
+  const res = await api.get<MeetingDetailsDto>(`/meetings/${meetingId}`);
   return res.data;
 }

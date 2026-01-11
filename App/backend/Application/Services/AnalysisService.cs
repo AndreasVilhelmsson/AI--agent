@@ -218,4 +218,99 @@ Timestamped segments:
 		var ts = TimeSpan.FromSeconds(Math.Max(0, seconds));
 		return ts.Hours > 0 ? ts.ToString(@"h\:mm\:ss") : ts.ToString(@"m\:ss");
 	}
+	public async Task<string> GenerateMeetingTitleAsync(
+	string transcriptText,
+	CancellationToken ct = default)
+	{
+		const string fallback = "New meeting";
+
+		if (string.IsNullOrWhiteSpace(transcriptText))
+			return fallback;
+
+		// Ta en begränsad bit av transcript för att hålla kostnaden nere
+		var snippet = transcriptText.Length > 2000
+			? transcriptText[..2000]
+			: transcriptText;
+
+		var systemPrompt =
+			"""
+        You are an AI assistant that generates short meeting titles.
+
+        Output MUST be strict JSON (no markdown, no extra text):
+        { "title": string }
+
+        Rules:
+        - Use the SAME language as the transcript.
+        - Title should be 3–7 words.
+        - Keep it specific to the content (no generic "Meeting").
+        - If transcript is unclear, use a neutral title like "Meeting summary".
+        - Do NOT include quotes around the title value (just plain string).
+        """;
+
+		var payload = new
+		{
+			model = _model,
+			response_format = new { type = "json_object" },
+			messages = new[]
+			{
+			new { role = "system", content = systemPrompt },
+			new { role = "user", content = snippet }
+		}
+		};
+
+		using var request = new HttpRequestMessage(
+			HttpMethod.Post,
+			"https://api.openai.com/v1/chat/completions");
+
+		request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _apiKey);
+		request.Content = new StringContent(
+			JsonSerializer.Serialize(payload),
+			Encoding.UTF8,
+			"application/json");
+
+		using var response = await _httpClient.SendAsync(request, ct);
+		var rawBody = await response.Content.ReadAsStringAsync(ct);
+
+		if (!response.IsSuccessStatusCode)
+			return fallback;
+
+		try
+		{
+			using var doc = JsonDocument.Parse(rawBody);
+
+			var content = doc.RootElement
+				.GetProperty("choices")[0]
+				.GetProperty("message")
+				.GetProperty("content")
+				.GetString();
+
+			if (string.IsNullOrWhiteSpace(content))
+				return fallback;
+
+			using var resultDoc = JsonDocument.Parse(content.Trim());
+			var root = resultDoc.RootElement;
+
+			var title = root.TryGetProperty("title", out var titleProp)
+				? (titleProp.GetString() ?? "").Trim()
+				: "";
+
+			// Guards
+			if (string.IsNullOrWhiteSpace(title))
+				return fallback;
+
+			// Undvik “för generiska” titlar
+			if (title.Equals("Meeting", StringComparison.OrdinalIgnoreCase) ||
+				title.Equals("New meeting", StringComparison.OrdinalIgnoreCase))
+				return fallback;
+
+			// Cap längd så det inte blir en hel mening
+			if (title.Length > 80) title = title[..80].Trim();
+
+			return title;
+		}
+		catch
+		{
+			return fallback;
+		}
+	}
 }

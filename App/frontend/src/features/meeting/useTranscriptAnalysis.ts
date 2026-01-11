@@ -12,21 +12,35 @@ export function useTranscriptAnalysis(meetingId: number | null) {
   const [data, setData] = useState<AnalyzeTranscriptResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const run = useCallback(async () => {
-    if (!meetingId) return;
-    setStatus("loading");
+  const run =
+    useCallback(async (): Promise<AnalyzeTranscriptResponse | null> => {
+      if (!meetingId) {
+        setError("Missing meetingId");
+        setStatus("error");
+        return null;
+      }
+
+      setStatus("loading");
+      setError(null);
+
+      try {
+        const res = await analyzeMeetingTranscript(meetingId);
+        setData(res);
+        setStatus("success");
+        return res;
+      } catch (e: unknown) {
+        const msg = getErrorMessage(e, "Failed to analyze transcript");
+        setError(msg);
+        setStatus("error");
+        return null;
+      }
+    }, [meetingId]);
+
+  const reset = useCallback(() => {
+    setStatus("idle");
+    setData(null);
     setError(null);
-    try {
-      const res = await analyzeMeetingTranscript(meetingId);
-      setData(res);
-      setStatus("success");
-      return res;
-    } catch (e: unknown) {
-      setError(getErrorMessage(e, "Failed to analyze transcript"));
-      setStatus("error");
-      return null;
-    }
-  }, [meetingId]);
+  }, []);
 
   return {
     status,
@@ -34,10 +48,6 @@ export function useTranscriptAnalysis(meetingId: number | null) {
     data,
     error,
     run,
-    reset: () => {
-      setStatus("idle");
-      setData(null);
-      setError(null);
-    },
+    reset,
   };
 }

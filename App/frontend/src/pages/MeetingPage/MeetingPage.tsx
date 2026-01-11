@@ -85,7 +85,6 @@ export const MeetingPage: React.FC = () => {
               disabled={isAnalyzing}
             />
 
-            {/* 🔻 Transcript + Detailed analysis använder samma meetingId */}
             {meetingError && <p style={{ color: "crimson" }}>{meetingError}</p>}
 
             <TranscriptCard

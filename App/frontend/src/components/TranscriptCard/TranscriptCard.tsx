@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { uploadMeetingAudio } from "../../features/meeting/meetingsApi";
 import { useMeetingTranscript } from "../../features/meeting/useMeetingTranscript";
 import { getErrorMessage } from "../../shared/errors/getErrorMessage";
@@ -17,24 +18,47 @@ export const TranscriptCard: React.FC<Props> = ({
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [uiError, setUiError] = useState<string | null>(null);
 
   const transcript = useMeetingTranscript(meetingId);
 
+  const isBusy = useMemo(
+    () => disabled || isUploading || transcript.loading,
+    [disabled, isUploading, transcript.loading]
+  );
+
+  const onRefresh = async () => {
+    if (!meetingId) return;
+    try {
+      await transcript.refresh();
+      toast.success("Transcript refreshed");
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "Failed to refresh transcript"));
+    }
+  };
+
   const onUpload = async () => {
     if (!meetingId || !file) return;
+
     setIsUploading(true);
-    setUiError(null);
 
     try {
       await uploadMeetingAudio(meetingId, file);
-      await transcript.refresh();
+      toast.success("Audio uploaded");
 
-      // valfritt: skicka transcript-text till din befintliga startAnalysis()
+      await transcript.refresh();
+      toast.success("Transcription ready");
+
+      // valfritt: auto-analys efter upload (använder din befintliga text-analys)
       const text = transcript.data?.text;
-      if (text && onAnalyzeText) onAnalyzeText(text);
+      if (text && onAnalyzeText) {
+        onAnalyzeText(text);
+        toast.success("Analysis started");
+      }
+
+      // UX: rensa vald fil efter lyckad upload
+      setFile(null);
     } catch (error: unknown) {
-      setUiError(getErrorMessage(error, "Upload failed"));
+      toast.error(getErrorMessage(error, "Upload failed"));
     } finally {
       setIsUploading(false);
     }
@@ -44,13 +68,14 @@ export const TranscriptCard: React.FC<Props> = ({
     <section className="transcript-card">
       <header className="transcript-card__header">
         <h3 className="transcript-card__title">Transcript</h3>
+
         <button
           type="button"
           className="transcript-card__btn"
-          onClick={transcript.refresh}
-          disabled={!meetingId || transcript.loading || disabled}
+          onClick={onRefresh}
+          disabled={!meetingId || isBusy}
         >
-          Refresh
+          {transcript.loading ? "Refreshing…" : "Refresh"}
         </button>
       </header>
 
@@ -61,39 +86,54 @@ export const TranscriptCard: React.FC<Props> = ({
           type="file"
           accept="audio/*"
           onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          disabled={disabled || isUploading}
+          disabled={!meetingId || isBusy}
         />
+
         <button
           type="button"
           className="transcript-card__btn primary"
           onClick={onUpload}
-          disabled={!meetingId || !file || disabled || isUploading}
+          disabled={!meetingId || !file || isBusy}
         >
           {isUploading ? "Uploading…" : "Upload audio"}
         </button>
       </div>
 
-      {uiError && <p className="transcript-card__error">{uiError}</p>}
+      {/* Hook-fel */}
       {transcript.error && (
         <p className="transcript-card__error">{transcript.error}</p>
       )}
-      {transcript.loading && <p className="transcript-card__muted">Loading…</p>}
 
-      {!transcript.loading && !transcript.error && transcript.data && (
-        <>
-          <div className="transcript-card__meta">
-            <span>Lang: {transcript.data.language}</span>
-            <span>Seg: {transcript.data.segmentCount}</span>
-            <span>{Math.round(transcript.data.durationSeconds)}s</span>
-          </div>
-
-          <pre className="transcript-card__text">{transcript.data.text}</pre>
-        </>
+      {/* Content */}
+      {!meetingId && (
+        <p className="transcript-card__muted">Create/select a meeting first.</p>
       )}
 
-      {!transcript.loading && !transcript.error && !transcript.data && (
-        <p className="transcript-card__muted">No transcript yet.</p>
+      {meetingId && transcript.loading && (
+        <p className="transcript-card__muted">Loading…</p>
       )}
+
+      {meetingId &&
+        !transcript.loading &&
+        !transcript.error &&
+        transcript.data && (
+          <>
+            <div className="transcript-card__meta">
+              <span>Lang: {transcript.data.language}</span>
+              <span>Seg: {transcript.data.segmentCount}</span>
+              <span>{Math.round(transcript.data.durationSeconds)}s</span>
+            </div>
+
+            <pre className="transcript-card__text">{transcript.data.text}</pre>
+          </>
+        )}
+
+      {meetingId &&
+        !transcript.loading &&
+        !transcript.error &&
+        !transcript.data && (
+          <p className="transcript-card__muted">No transcript yet.</p>
+        )}
     </section>
   );
 };

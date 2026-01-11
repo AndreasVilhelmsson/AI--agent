@@ -28,7 +28,7 @@ type MeetingAnalysisWire = {
   CreatedAtUtc?: string;
 };
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: "http://localhost:5168/api",
   headers: {
     "Content-Type": "application/json",
@@ -51,12 +51,11 @@ export async function fetchAnalysisById(id: number): Promise<MeetingAnalysis> {
 }
 
 export async function analyzeNotes(text: string): Promise<AnalyzeResponse> {
-  // håll dig konsekvent: använd samma casing i URL:en (rekommenderar lowercase)
   const res = await api.post<MeetingAnalysisWire>("/analysis/analyze", {
     text,
   });
-
   const normalized = normalizeMeetingAnalysis(res.data);
+
   return {
     id: normalized.id,
     summary: normalized.summary,

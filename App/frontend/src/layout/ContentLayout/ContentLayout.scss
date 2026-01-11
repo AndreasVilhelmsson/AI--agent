@@ -7,7 +7,11 @@
     grid-template-columns: 1fr;
   }
 }
-
+.content-layout__left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 .content-layout__left,
 .content-layout__right {
   background: var(--panel);
