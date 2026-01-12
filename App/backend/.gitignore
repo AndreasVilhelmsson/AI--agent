@@ -13,6 +13,8 @@ out/
 [Rr]elease/
 x64/
 x86/
+publish/
+backend.zip
 
 ####################################
 # ASP.NET Core

@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import * as signalR from "@microsoft/signalr";
-import axios from "axios";
 import type { StepUpdate, AnalysisResult } from "../../types/analysis";
+import { http } from "../../api/http";
 
-// JUSTERA om din backend har annan port
-const BACKEND_BASE_URL = "http://localhost:5168";
-const HUB_URL = `${BACKEND_BASE_URL}/hubs/meeting`;
-const ANALYZE_URL = `${BACKEND_BASE_URL}/api/analysis/analyze`;
+const SIGNALR_BASE = import.meta.env.VITE_SIGNALR_BASE_URL;
+const HUB_URL = `${SIGNALR_BASE}/hubs/meeting`;
 
 export function useMeetingHub() {
   const connectionRef = useRef<signalR.HubConnection | null>(null);
@@ -18,21 +16,18 @@ export function useMeetingHub() {
   const [actions, setActions] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // skapa och starta SignalR-connection
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(HUB_URL)
+      .withUrl(HUB_URL) // senare kan vi lägga options om needed
       .withAutomaticReconnect()
       .build();
 
     connectionRef.current = connection;
 
-    // lyssna på stepUpdate
     connection.on("stepUpdate", (payload: StepUpdate) => {
       setSteps((prev) => [...prev, payload]);
     });
 
-    // lyssna på resultReady
     connection.on("resultReady", (payload: AnalysisResult) => {
       setSummary(payload.summary);
       setActions(payload.actions);
@@ -51,11 +46,7 @@ export function useMeetingHub() {
       });
 
     return () => {
-      connection
-        .stop()
-        .catch((err) =>
-          console.error("Error while stopping SignalR connection:", err)
-        );
+      connection.stop().catch(console.error);
     };
   }, []);
 
@@ -69,15 +60,8 @@ export function useMeetingHub() {
     setActions([]);
 
     try {
-      // HTTP-anropet triggar analysen på servern
-      // själva resultatet kommer via SignalR (resultReady)
-      await axios.post(
-        ANALYZE_URL,
-        { text },
-        {
-          withCredentials: false,
-        }
-      );
+      // Anropa samma endpoint som swagger visar (kolla casing!)
+      await http.post("/api/Analysis/analyze", { text });
     } catch (err) {
       console.error("Error starting analysis:", err);
       setError("Failed to start analysis.");

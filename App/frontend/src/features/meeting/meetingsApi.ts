@@ -1,6 +1,6 @@
 // features/meeting/meetingsApi.ts
 import axios from "axios";
-import { api } from "./api";
+import { http } from "../../api/http";
 
 export type CreateMeetingResponse = {
   id: number;
@@ -80,7 +80,7 @@ export type MeetingDetailsDto = {
 };
 
 export async function createMeeting(title: string) {
-  const res = await api.post<CreateMeetingResponse>("/meetings", { title });
+  const res = await http.post<CreateMeetingResponse>("/meetings", { title });
   return res.data;
 }
 
@@ -88,7 +88,7 @@ export async function uploadMeetingAudio(meetingId: number, file: File) {
   const form = new FormData();
   form.append("file", file);
 
-  const res = await api.post<UploadAudioResponse>(
+  const res = await http.post<UploadAudioResponse>(
     `/meetings/${meetingId}/audio`,
     form,
     {
@@ -101,7 +101,7 @@ export async function uploadMeetingAudio(meetingId: number, file: File) {
 
 export async function fetchMeetingTranscript(meetingId: number) {
   try {
-    const res = await api.get<MeetingTranscriptDto>(
+    const res = await http.get<MeetingTranscriptDto>(
       `/meetings/${meetingId}/transcript`
     );
     return res.data;
@@ -115,20 +115,20 @@ export async function fetchMeetingTranscript(meetingId: number) {
 
 // ✅ En funktion: Generate detailed analysis
 export async function analyzeMeetingTranscript(meetingId: number) {
-  const res = await api.post<AnalyzeTranscriptResponse>(
+  const res = await http.post<AnalyzeTranscriptResponse>(
     `/meetings/${meetingId}/analyze-transcript`
   );
   return res.data;
 }
 
 export async function fetchMeetings(take = 25) {
-  const res = await api.get<MeetingListItemDto[]>(`/meetings`, {
+  const res = await http.get<MeetingListItemDto[]>(`/meetings`, {
     params: { take },
   });
   return res.data;
 }
 
 export async function fetchMeetingDetails(meetingId: number) {
-  const res = await api.get<MeetingDetailsDto>(`/meetings/${meetingId}`);
+  const res = await http.get<MeetingDetailsDto>(`/meetings/${meetingId}`);
   return res.data;
 }

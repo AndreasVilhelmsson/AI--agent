@@ -1,0 +1,18 @@
+# ===== Bicep / Azure =====
+
+# Parameterfiler (kan innehålla secrets)
+*.bicepparam
+params.*.bicepparam
+
+# CLI state / temp
+.azure/
+*.jsonc
+
+# ===== Deploy artifacts =====
+
+# Publish output / zip
+artifacts/
+*.zip
+
+# ===== Logs / temp =====
+*.log

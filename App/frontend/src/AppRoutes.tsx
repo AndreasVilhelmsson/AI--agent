@@ -1,7 +1,6 @@
 // src/app/AppRoutes.tsx
 import { Routes, Route } from "react-router-dom";
 import { AppShell } from "./layout/AppShell/AppShell";
-
 import { MeetingPage } from "./pages/MeetingPage";
 import { HistoryPage } from "./pages/HistoryPage";
 import { MeetingDetailsPage } from "./pages/MeetingDetailsPage/MeetingDetailsPage";

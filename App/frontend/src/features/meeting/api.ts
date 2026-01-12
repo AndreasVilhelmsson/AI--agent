@@ -1,6 +1,6 @@
 // features/meeting/api.ts
-import axios from "axios";
 import type { AnalysisListItem } from "../../types/analysis";
+import { http } from "../../api/http";
 
 export type AnalyzeResponse = {
   id: number;
@@ -16,7 +16,6 @@ export interface MeetingAnalysis {
   createdAtUtc: string;
 }
 
-// "Wire"-typen (vad backend kan råka skicka)
 type MeetingAnalysisWire = {
   id: number;
   summary: string;
@@ -27,13 +26,6 @@ type MeetingAnalysisWire = {
   createdAtUtc?: string;
   CreatedAtUtc?: string;
 };
-
-export const api = axios.create({
-  baseURL: "http://localhost:5168/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
 
 function normalizeMeetingAnalysis(w: MeetingAnalysisWire): MeetingAnalysis {
   return {
@@ -46,12 +38,12 @@ function normalizeMeetingAnalysis(w: MeetingAnalysisWire): MeetingAnalysis {
 }
 
 export async function fetchAnalysisById(id: number): Promise<MeetingAnalysis> {
-  const res = await api.get<MeetingAnalysisWire>(`/analysis/${id}`);
+  const res = await http.get<MeetingAnalysisWire>(`/api/analysis/${id}`);
   return normalizeMeetingAnalysis(res.data);
 }
 
 export async function analyzeNotes(text: string): Promise<AnalyzeResponse> {
-  const res = await api.post<MeetingAnalysisWire>("/analysis/analyze", {
+  const res = await http.post<MeetingAnalysisWire>("/api/Analysis/analyze", {
     text,
   });
   const normalized = normalizeMeetingAnalysis(res.data);
@@ -66,7 +58,7 @@ export async function analyzeNotes(text: string): Promise<AnalyzeResponse> {
 export async function fetchAnalysisHistory(
   take: number = 5
 ): Promise<AnalysisListItem[]> {
-  const res = await api.get<AnalysisListItem[]>("/analysis", {
+  const res = await http.get<AnalysisListItem[]>("/api/analysis", {
     params: { take },
   });
   return res.data;
