@@ -80,7 +80,7 @@ export type MeetingDetailsDto = {
 };
 
 export async function createMeeting(title: string) {
-  const res = await http.post<CreateMeetingResponse>("/meetings", { title });
+  const res = await http.post<CreateMeetingResponse>("/api/meetings", { title });
   return res.data;
 }
 
@@ -89,7 +89,7 @@ export async function uploadMeetingAudio(meetingId: number, file: File) {
   form.append("file", file);
 
   const res = await http.post<UploadAudioResponse>(
-    `/meetings/${meetingId}/audio`,
+    `/api/meetings/${meetingId}/audio`,
     form,
     {
       headers: { "Content-Type": "multipart/form-data" },
@@ -102,7 +102,7 @@ export async function uploadMeetingAudio(meetingId: number, file: File) {
 export async function fetchMeetingTranscript(meetingId: number) {
   try {
     const res = await http.get<MeetingTranscriptDto>(
-      `/meetings/${meetingId}/transcript`
+      `/api/meetings/${meetingId}/transcript`
     );
     return res.data;
   } catch (err: unknown) {
@@ -116,19 +116,19 @@ export async function fetchMeetingTranscript(meetingId: number) {
 // ✅ En funktion: Generate detailed analysis
 export async function analyzeMeetingTranscript(meetingId: number) {
   const res = await http.post<AnalyzeTranscriptResponse>(
-    `/meetings/${meetingId}/analyze-transcript`
+    `/api/meetings/${meetingId}/analyze-transcript`
   );
   return res.data;
 }
 
 export async function fetchMeetings(take = 25) {
-  const res = await http.get<MeetingListItemDto[]>(`/meetings`, {
+  const res = await http.get<MeetingListItemDto[]>(`/api/meetings`, {
     params: { take },
   });
   return res.data;
 }
 
 export async function fetchMeetingDetails(meetingId: number) {
-  const res = await http.get<MeetingDetailsDto>(`/meetings/${meetingId}`);
+  const res = await http.get<MeetingDetailsDto>(`/api/meetings/${meetingId}`);
   return res.data;
 }

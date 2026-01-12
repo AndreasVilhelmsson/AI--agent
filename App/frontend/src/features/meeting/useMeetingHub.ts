@@ -40,7 +40,7 @@ export function useMeetingHub() {
         setIsConnected(true);
         setError(null);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error("SignalR connection error:", err);
         setError("Could not connect to realtime service.");
       });
