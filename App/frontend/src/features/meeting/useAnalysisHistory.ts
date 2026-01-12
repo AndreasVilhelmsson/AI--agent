@@ -12,6 +12,7 @@ export function useAnalysisHistory(take: number = 5) {
     setError(null);
     try {
       const data = await fetchAnalysisHistory(take);
+      console.log("Fetched analysis history:", data);
       setItems(data);
     } catch (err) {
       console.error("Failed to load history", err);
